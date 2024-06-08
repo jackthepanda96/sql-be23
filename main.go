@@ -16,7 +16,7 @@ type Genre struct {
 func connectDB() (*gorm.DB, error) {
 	// dsn := "host=localhost user=gorm password=gorm dbname=gorm port=9920 sslmode=disable TimeZone=Asia/Shanghai"
 
-	var connStr = "host=aws-0-ap-southeast-1.pooler.supabase.com user=postgres.cihiokxhntapbfoqzmqu password=9Q6a5tOxJDA837m3 port=5432 dbname=postgres"
+	var connStr = ""
 	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix: "public.",
