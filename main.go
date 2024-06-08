@@ -2,11 +2,21 @@ package main
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
+
+type Setting struct {
+	Host     string
+	User     string
+	Password string
+	Port     string
+	DBNAME   string
+}
 
 type Genre struct {
 	ID    int
@@ -23,8 +33,8 @@ type Book struct {
 	GenreID     int
 }
 
-func connectDB() (*gorm.DB, error) {
-	var connStr = "host=aws-0-ap-southeast-1.pooler.supabase.com user=postgres.cihiokxhntapbfoqzmqu password=9Q6a5tOxJDA837m3 port=5432 dbname=postgres"
+func connectDB(s Setting) (*gorm.DB, error) {
+	var connStr = fmt.Sprintf("host=%s user=%s password=%s port=%s dbname=%s", s.Host, s.User, s.Password, s.Port, s.DBNAME)
 	db, err := gorm.Open(postgres.Open(connStr), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix: "be23.",
@@ -38,8 +48,23 @@ func connectDB() (*gorm.DB, error) {
 	return db, nil
 }
 
+func importSetting() Setting {
+	var result Setting
+	err := godotenv.Load(".env")
+	if err != nil {
+		return Setting{}
+	}
+	result.Host = os.Getenv("poshost")
+	result.User = os.Getenv("posuser")
+	result.Password = os.Getenv("pospw")
+	result.Port = os.Getenv("posport")
+	result.DBNAME = os.Getenv("dbname")
+	return result
+}
+
 func main() {
-	db, err := connectDB()
+	setting := importSetting()
+	db, err := connectDB(setting)
 	if err != nil {
 		fmt.Println("terjadi masalah:", err.Error())
 		return
