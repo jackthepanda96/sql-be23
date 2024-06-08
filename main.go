@@ -69,7 +69,7 @@ func main() {
 		fmt.Println("terjadi masalah:", err.Error())
 		return
 	}
-
+	// Untuk create table
 	db.AutoMigrate(&Genre{}, &Book{})
 
 }
